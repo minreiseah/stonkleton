@@ -9,7 +9,7 @@ tickers = [x.replace('.', '-') for x in tickers]
 
 df_list = []
 
-print('Discounts:')
+print('Stock | Discounts | Expected IV')
 
 for ticker in tickers:
     try:
@@ -20,7 +20,16 @@ for ticker in tickers:
         continue
 
     discount = "{:.5%}".format(ticker_info.final_discount())
-    print(ticker, ':', discount)
+    final_iv = "${:.2f}".format(ticker_info.get_iv_with_debt())
+    print(f'{"helo": < 16} gello')
+
+    ticker_info.get_projected_cash_flow()
+    ticker_info.get_discount_rate()
+    ticker_info.get_present_value()
+    ticker_info.get_iv()
+    ticker_info.get_iv_with_cash()
+    ticker_info.get_iv_with_debt()
+
 
     columns = [k for k,v in ticker_info.attributes()]
     data = [[v for k,v in ticker_info.attributes()]]

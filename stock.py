@@ -43,7 +43,7 @@ class Stock:
         except Exception as err:
             self.cash_and_STI = ticker_info.balance_sheet().iloc[-2]['CashAndCashEquivalents'] # Last Q
         
-        self.operating_cash_flow = afd.iloc[-2]['OperatingCashFlow'] # TTM
+        self.operating_cash_flow = afd.iloc[-1]['OperatingCashFlow'] # TTM
 
         try:
             self.total_debt = afd.iloc[-2]['TotalDebt'] # Last Q
