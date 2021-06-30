@@ -33,9 +33,13 @@ for ticker in tickers:
         logging.info(err)
         print(f'Error with {ticker}\n')
         continue
-
-    discount = "{:.2%}".format(ticker_info.final_discount())
-    final_iv = "${:.2f}".format(ticker_info.get_iv_with_debt())
+    
+    if ticker_info.operating_cash_flow < 0:
+        discount = '-ve OPERATING CF'
+        final_iv = '-ve OPERATING CF'
+    else:
+        discount = "{:.2%}".format(ticker_info.final_discount())
+        final_iv = "${:.2f}".format(ticker_info.get_iv_with_debt())
     t.add_row([ticker, discount, final_iv])
 
     columns = [k for k,v in ticker_info.attributes()]
