@@ -1,8 +1,10 @@
 from math import ceil
+import numpy as np
+from functools import lru_cache, cached_property
 from yahooquery import Ticker
 import logging
 
-logging.basicConfig(filename='logfile.log', filemode='w', level=logging.DEBUG)
+logging.basicConfig(filename='logfile.log', filemode='w', level=logging.INFO)
 
 def get_discount_rate_from_beta(beta):
     if beta < 0.8:
@@ -16,8 +18,9 @@ def get_discount_rate_from_beta(beta):
     return round(dr*1000)/1000
 
 class Stock:
-    def __init__(self, ticker) -> None:
+    def __init__(self, ticker, year=10) -> None:
         self.ticker = ticker
+        self.year = year
         ticker_info = Ticker(ticker)
         
         # Basic
@@ -34,34 +37,45 @@ class Stock:
         
         
 
-        # Financials
-        types = ['CashCashEquivalentsAndShortTermInvestments', 'CashAndCashEquivalents', 'OperatingCashFlow', 'TotalDebt']
-        afd = ticker_info.get_financial_data(types, frequency='q', trailing=True)
+        # Balance Sheet
+        types = ['CashCashEquivalentsAndShortTermInvestments', 'CashAndCashEquivalents', 'TotalDebt']
+        bs = ticker_info.get_financial_data(types, frequency='q', trailing=False)
+        if type(bs) == str:
+            print(bs)
+            logging.info(bs)
 
+        ## Cash (Quarter)
         try:
-            self.cash_and_STI = afd.iloc[-2]['CashCashEquivalentsAndShortTermInvestments'] # Last Q
+            self.cash_and_STI = bs.iloc[-1]['CashCashEquivalentsAndShortTermInvestments']
         except Exception as err:
-            self.cash_and_STI = ticker_info.balance_sheet().iloc[-2]['CashAndCashEquivalents'] # Last Q
-        
-        self.operating_cash_flow = afd.iloc[-1]['OperatingCashFlow'] # TTM
+            self.cash_and_STI = bs.iloc[-1]['CashAndCashEquivalents']
 
+        ## Total Debt (Quarter)
         try:
-            self.total_debt = afd.iloc[-2]['TotalDebt'] # Last Q
+            self.total_debt = bs.iloc[-1]['TotalDebt'] # Last Q
         except KeyError as err:
-            logging.info(f'{ticker} does not have debt')
+            logging.info(f'{ticker} does not have debt or did not report it this last quarter.')
             self.total_debt = 0
+
+        # Operating Cash Flow (TTM/Annual)
+        cf = ticker_info.get_financial_data('OperatingCashFlow', frequency='a', trailing=True)
+        if not cf['periodType'].str.contains('TTM').any():
+            print(f'{ticker} does not have TTM operating cash flow. Using annual OCF...')
+            logging.info(f'{ticker} does not have TTM operating cash flow. Using annual OCF...')
+        self.operating_cash_flow = cf.iloc[-1]['OperatingCashFlow']
     
         # Estimates
         self.five_year_growth = ticker_info.earnings_trend[ticker]['trend'][4]['growth'] + 1
-        self.ten_year_growth = min(0.15, self.five_year_growth) + 1
+        self.ten_year_growth = min(1.15, self.five_year_growth)
     
     def attributes(self):
         return self.__dict__.items()
 
-    def get_discount_rate(self, year=10):
+    # Calculate present_value (projected cash flow / d_r)
+    def get_discount_rate(self, year):
         return self.discount_rate**year
     
-    def get_projected_cash_flow(self, year=10):
+    def get_projected_cash_flow(self, year):
         if year == 1:
             return self.operating_cash_flow * self.five_year_growth
         elif year < 6:
@@ -69,24 +83,25 @@ class Stock:
         else:
             return self.ten_year_growth * self.get_projected_cash_flow(year-1)
     
-    def get_present_value(self, year=10):
+    def get_present_value(self, year):
         return (self.get_projected_cash_flow(year) / self.get_discount_rate(year))
     
-    def sum_present_value(self, year=10):
+    def sum_present_value(self):
         sum = 0
-        for i in range(1, year+1):
+        for i in range(1, self.year+1):
             sum += self.get_present_value(i)
         return sum
-
-    def get_iv(self, year=10):
-        return self.sum_present_value(year) / self.shares_outstanding
     
-    def get_iv_with_cash(self, year=10): # iv + cash
-        return self.get_iv(year) + (self.cash_and_STI / self.shares_outstanding)
+    # Forecast IV
+    def get_iv(self):
+        return self.sum_present_value() / self.shares_outstanding
     
-    def get_iv_with_debt(self, year=10): # iv + cash - debt
-        return self.get_iv_with_cash(year) - (self.total_debt / self.shares_outstanding)
+    def get_iv_with_cash(self): # iv + cash
+        return self.get_iv() + (self.cash_and_STI / self.shares_outstanding)
     
-    def final_discount(self, year=10):
-        final_iv = self.get_iv_with_debt(year)
+    def get_iv_with_debt(self): # iv + cash - debt
+        return self.get_iv_with_cash() - (self.total_debt / self.shares_outstanding)
+    
+    def final_discount(self):
+        final_iv = self.get_iv_with_debt()
         return (final_iv - self.current_price) / final_iv
