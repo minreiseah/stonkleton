@@ -9,4 +9,5 @@ dependencies:
   - jinja2
   - prettytable
   - pip
+  - pyinstaller
 prefix: /home/minrei/anaconda3/envs/stonkleton_env
