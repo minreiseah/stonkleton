@@ -24,8 +24,15 @@ class Stock:
         ticker_info = Ticker(ticker)
         
         # Basic
-        self.current_price = ticker_info.financial_data[ticker]['currentPrice']
+        self.current_price_USD = ticker_info.financial_data[ticker]['currentPrice']
         self.shares_outstanding = ticker_info.key_stats[ticker]['sharesOutstanding']
+
+        # Convert stock price to USD (Applicable for non-US markets)
+        currency_of_price = ticker_info.summary_detail[ticker]['currency']
+        if currency_of_price != 'USD':
+            currency_quote = currency_of_price + 'USD=X'
+            conversion_ratio = Ticker(currency_quote).summary_detail[currency_quote]['ask']
+            self.current_price_USD = self.current_price_USD * conversion_ratio
 
         try:
             self.beta = ticker_info.key_stats[ticker]['beta']
@@ -114,4 +121,4 @@ class Stock:
     
     def final_discount(self):
         final_iv = self.get_iv_with_debt()
-        return (final_iv - self.current_price) / final_iv
+        return (final_iv - self.current_price_USD) / final_iv
