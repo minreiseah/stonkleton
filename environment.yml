@@ -1,0 +1,12 @@
+name: stonkleton_env
+channels:
+  - defaults
+dependencies:
+  - requests
+  - ipython
+  - pandas
+  - tk
+  - jinja2
+  - prettytable
+  - pip
+prefix: /home/minrei/anaconda3/envs/stonkleton_env
