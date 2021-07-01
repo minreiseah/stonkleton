@@ -1,5 +1,8 @@
-/.vscode/
 __pycache__/
+/.vscode/
+tempCodeRunnerFile.py
+
+
 tests/
 *.csv
 *.log

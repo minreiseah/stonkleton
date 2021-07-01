@@ -12,16 +12,10 @@ tickers = [x.replace('.', '-') for x in tickers]
 
 # used later to concantenate lists into df; then export to csv
 df_list = []
-COLUMNS = [
-    'ticker', 'year', 'current_price', 'shares_outstanding', 
-    'beta', 'discount_rate', 'cash_and_STI', 'total_debt', 
-    'operating_cash_flow', 'five_year_growth', 'ten_year_growth',
-
-]
 
 # printint
 t = PrettyTable()
-t.field_names = ['Stock', 'Estimated Discount', 'Expected IV']
+t.field_names = ['Stock', 'Estimated Discount', 'Expected IV (USD)']
 t.align = 'r'
 t.align['Stock'] = 'l'
 

@@ -1,8 +1,8 @@
 from math import ceil
 import numpy as np
-from functools import lru_cache, cached_property
-from yahooquery import Ticker
 import logging
+
+from yahooquery import Ticker
 
 logging.basicConfig(filename='logfile.log', filemode='w', level=logging.INFO)
 
@@ -35,14 +35,16 @@ class Stock:
             self.discount_rate = 1.09
             logging.info(f'{ticker} does not have beta')
         
-        
-
+    
         # Balance Sheet
         types = ['CashCashEquivalentsAndShortTermInvestments', 'CashAndCashEquivalents', 'TotalDebt']
         bs = ticker_info.get_financial_data(types, frequency='q', trailing=False)
-        if type(bs) == str:
+        if type(bs) == str: # if company did NOT report balance sheet
             print(bs)
             logging.info(bs)
+
+        # Forex
+        self.forex = bs.iloc[-1]['currencyCode']
 
         ## Cash (Quarter)
         try:
@@ -63,6 +65,14 @@ class Stock:
             print(f'{ticker} does not have TTM operating cash flow. Using annual OCF...')
             logging.info(f'{ticker} does not have TTM operating cash flow. Using annual OCF...')
         self.operating_cash_flow = cf.iloc[-1]['OperatingCashFlow']
+
+        # Convert Currency to USD
+        if self.forex != 'USD':
+            currency_quote = self.forex + 'USD=X'
+            conversion_ratio = Ticker(currency_quote).summary_detail[currency_quote]['ask']
+            self.cash_and_STI = self.cash_and_STI * conversion_ratio
+            self.total_debt = self.total_debt * conversion_ratio
+            self.operating_cash_flow = self.operating_cash_flow * conversion_ratio
     
         # Estimates
         self.five_year_growth = ticker_info.earnings_trend[ticker]['trend'][4]['growth'] + 1
