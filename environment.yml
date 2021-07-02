@@ -8,5 +8,6 @@ dependencies:
   - ipython
   - pandas
   - pyinstaller
+  - pip
   - pip:
     - yahooquery
