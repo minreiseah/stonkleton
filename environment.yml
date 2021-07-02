@@ -1,13 +1,12 @@
 name: stonkleton_env
 channels:
+  - conda-forge
   - defaults
 dependencies:
+  - python=3.8
   - requests
   - ipython
   - pandas
-  - tk
-  - jinja2
-  - prettytable
-  - pip
   - pyinstaller
-prefix: /home/minrei/anaconda3/envs/stonkleton_env
+  - pip:
+    - yahooquery

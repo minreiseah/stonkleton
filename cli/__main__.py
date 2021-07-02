@@ -1,19 +1,16 @@
-from stock import Stock
-
+import os
 import pandas as pd
 from prettytable import PrettyTable
 import logging
 
+from stock import Stock
+
 def main():
     logging.basicConfig(filename='logfile.log', filemode='w', level=logging.DEBUG)
-    done = True
     while(True):
-        if(done):
-            event()
+        event() 
 
 def event():
-
-    done = False
 
     # get user input
     tickers = [x.upper() for x in input("Input Ticker(s): ").split()]
@@ -23,7 +20,7 @@ def event():
     # used later to concantenate lists into df; then export to csv
     df_list = []
 
-    # printint
+    # printing
     t = PrettyTable()
     t.field_names = ['Stock', 'Estimated Discount', 'Expected IV (USD)']
     t.align = 'r'
@@ -74,11 +71,10 @@ def event():
 
     try:
         df = pd.concat(df_list, ignore_index=True)
-        df.to_csv('full_data.csv')
+        df_out = os.path.dirname(os.path.realpath(__file__))
+        df.to_csv(os.path.join(df_out, 'full_data.csv'))
     except:
         print('No valid tickers')
     
-    done = True
-
 if __name__ == '__main__':
     main()
