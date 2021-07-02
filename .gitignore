@@ -1,7 +1,12 @@
+# IDE
 __pycache__/
 /.vscode/
+/.pytest_cache/
 tempCodeRunnerFile.py
 
+# PyInstaller
+/build/
+/dist/
 
 tests/
 *.csv

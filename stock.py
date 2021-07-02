@@ -1,5 +1,4 @@
 from math import ceil
-import numpy as np
 import logging
 
 from yahooquery import Ticker

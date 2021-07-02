@@ -71,10 +71,9 @@ def event():
 
     try:
         df = pd.concat(df_list, ignore_index=True)
-        df_out = os.path.dirname(os.path.realpath(__file__))
-        df.to_csv(os.path.join(df_out, 'full_data.csv'))
-    except:
+        df.to_csv('full_data.csv')
+    except Exception as err:
         print('No valid tickers')
-    
+
 if __name__ == '__main__':
     main()
