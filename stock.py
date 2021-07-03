@@ -6,6 +6,15 @@ from yahooquery import Ticker
 logging.basicConfig(filename='logfile.log', filemode='w', level=logging.INFO)
 
 def get_discount_rate_from_beta(beta):
+    """Converts beta to discount rate
+
+    Args:
+        beta (float): Correlation to stock market.
+
+    Returns:
+        A float corresponding to the discount rate.
+    """
+
     if beta < 0.8:
         return 1.05
     elif beta <= 1:
@@ -17,6 +26,51 @@ def get_discount_rate_from_beta(beta):
     return round(dr*1000)/1000
 
 class Stock:
+    """A class used to process a ticker.
+    
+    Attributes:
+        ticker: Abbreviation of company.
+
+        year: How many years to forecast.
+
+        current_price_USD: The stock's current price in USD.
+
+        shares_outstanding: Shares outstanding.
+
+        beta: Beta.
+
+        forex: Currency the financials are reported in.
+
+        cash_and_STI: Recent quarter cash and ST investments.
+
+        total_debt: Recent quarter debt.
+
+        operating_cash_flow: TTM operating cash flow.
+
+        five_year_growth: Estimated p.a. earnings growth.
+
+        discount_rate: Discount rate.
+
+        ten_year_growth: Estimated p.a. earnings growth.
+        
+    Methods:
+        get_discount_rate(self, year): Calculates discount rate.
+
+        get_projected_cash_flow(self, year): Calculates projected_cash_flow.
+
+        get_present_value(self, year): Calculates present value based off discount rate and projected cash flow.
+
+        sum_present_value(self): Sums present values.
+
+        get_iv(self): Calculates intrinsic value.
+
+        get_iv_with_cash(self): IV + cash.
+
+        get_iv_with_debt(self): IV + cash - debt.
+
+        final_discount(self): Calculates estimated discount w.r.t. current price.
+    """
+
     def __init__(self, ticker, year=10) -> None:
         self.ticker = ticker
         self.year = year

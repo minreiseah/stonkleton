@@ -1,4 +1,3 @@
-import os
 import pandas as pd
 from prettytable import PrettyTable
 import logging
@@ -26,8 +25,8 @@ def event():
     t.align = 'r'
     t.align['Stock'] = 'l'
 
-
     for ticker in tickers:
+        # Process ticker
         try:
             ticker_info = Stock(ticker)
         except Exception as err:
@@ -35,14 +34,17 @@ def event():
             print(f'Error with {ticker}\n')
             continue
         
+        # Ignore tickers with negative operating cash flow
         if ticker_info.operating_cash_flow < 0:
             discount = '-ve OPERATING CF'
             final_iv = '-ve OPERATING CF'
+        # Format discount and final_iv data
         else:
             discount = "{:.2%}".format(ticker_info.final_discount())
             final_iv = "${:.2f}".format(ticker_info.get_iv_with_debt())
         t.add_row([ticker, discount, final_iv])
 
+        # Prepare data to be added into csv of all data
         columns = [k for k,v in ticker_info.attributes()]
         columns.extend([
             'projected_cash_flow', 'discount_rate', 'present_value', 'sum_present_value',
@@ -62,13 +64,12 @@ def event():
         df = pd.DataFrame(data=[data], columns=columns)
         df_list.append(df)
 
-        # for k, v in zip(columns, data):
-        #     print(k, '=', v)
-
         del ticker_info
 
+    # Output data
     print(t)
 
+    # Output full data csv
     try:
         df = pd.concat(df_list, ignore_index=True)
         df.to_csv('full_data.csv')

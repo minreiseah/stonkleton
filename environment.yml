@@ -9,6 +9,8 @@ dependencies:
   - pandas
   - pyinstaller
   - prettytable
+  - python-telegram-bot
+  - python-dotenv
   - pip
   - pip:
     - yahooquery
