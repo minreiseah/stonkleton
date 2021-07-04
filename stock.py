@@ -3,8 +3,6 @@ import logging
 
 from yahooquery import Ticker
 
-logging.basicConfig(filename='logfile.log', filemode='w', level=logging.INFO)
-
 def get_discount_rate_from_beta(beta):
     """Converts beta to discount rate
 
@@ -100,7 +98,7 @@ class Stock:
         types = ['CashCashEquivalentsAndShortTermInvestments', 'CashAndCashEquivalents', 'TotalDebt']
         bs = ticker_info.get_financial_data(types, frequency='q', trailing=False)
         if type(bs) == str: # if company did NOT report balance sheet
-            print(bs)
+            print(bs) # usually "cash flow data unavailable for {ticker}"
             logging.info(bs)
 
         # Forex

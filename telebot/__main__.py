@@ -10,18 +10,21 @@ from telebot.bot import Bot
 def main():
     # Basic Setup
     load_dotenv()
-    logging.basicConfig(filename='telebotlog.log', filemode='w', level=logging.DEBUG,   
+    logging.basicConfig(filename='telebotlog.log', filemode='w', level=logging.INFO,   
                         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
-    # get token from env 
+    # Get token from env 
     try:
         token = os.environ.get('TELEGRAM_API_TOKEN')
-        
     except KeyError as err:
         logging.error(err)
-    
-    bot = Bot(token)
-    pass
+
+    try:    
+        bot = Bot(token)
+        bot.run()
+    except Exception as err:
+        logging.error('Bot failed to start.')
+        logging.error(err)
 
 
 if __name__ == '__main__':

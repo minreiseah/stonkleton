@@ -5,7 +5,7 @@ import logging
 from stock import Stock
 
 def main():
-    logging.basicConfig(filename='logfile.log', filemode='w', level=logging.DEBUG,
+    logging.basicConfig(filename='logfile.log', filemode='w', level=logging.INFO,
                         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     while(True):
         event() 
