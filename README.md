@@ -1,5 +1,4 @@
 # stonkleton
-two retards
 
 
 # To Do
