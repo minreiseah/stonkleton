@@ -1,5 +1,5 @@
-# stonkleton
-
+# Stonkleton
+CLI to provide users with the intrinsic value of stocks. Data is scraped online and used in the model.
 
 # To Do
 - Telegram Bot 
