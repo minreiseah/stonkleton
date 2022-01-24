@@ -1,5 +1,6 @@
 # Stonkleton
-CLI to provide users with the intrinsic value of stocks. Data is scraped online and used in the model.
+CLI to provide users with the intrinsic value of stocks.
+Data is obtained from Yahoo Finance and used in an instrinic value model.
 
 # To Do
 - Telegram Bot 
