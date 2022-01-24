@@ -6,13 +6,9 @@ CLI to provide users with the intrinsic value of stocks. Data is scraped online 
     - Features:
         Send ticker -> return estimated discount rate and expected IV
         User watchlist; /scan to iterate with send ticker function
-    - Ref:
-        https://github.com/guysoft/AlarmBot/blob/master/src/alarm_bot.py
 
 - Add a range of expected earnings estimates
     - Get 5Y EPS growth estimate from Zachs (via Scrapy)
-
-- GUI for desktop application
 
 # Features Roadmap
 - Screener

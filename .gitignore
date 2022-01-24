@@ -4,6 +4,10 @@ __pycache__/
 /.pytest_cache/
 tempCodeRunnerFile.py
 
+# env
+.env
+bfg.jar
+
 # PyInstaller
 /build/
 /dist/
