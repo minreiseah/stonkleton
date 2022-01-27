@@ -4,6 +4,9 @@ __pycache__/
 /.pytest_cache/
 tempCodeRunnerFile.py
 
+# env
+.env
+
 # PyInstaller
 /build/
 /dist/
